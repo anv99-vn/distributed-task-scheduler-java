@@ -1,0 +1,50 @@
+server:
+  port: 8000
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: ${POSTGRES_JDBC_URL:jdbc:postgresql://localhost:5432/taskscheduler}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379/0}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:admin}
+  cassandra:
+    contact-points: ${CASSANDRA_CONTACT_POINTS:localhost}
+    port: ${CASSANDRA_PORT:9042}
+    local-datacenter: ${CASSANDRA_LOCAL_DATACENTER:datacenter1}
+    schema-action: none
+
+task-scheduler:
+  relay-interval-seconds: ${RELAY_INTERVAL_SECONDS:300}
+  relay-lookahead-minutes: ${RELAY_LOOKAHEAD_MINUTES:15}
+  scheduler-poll-ms: ${SCHEDULER_POLL_MS:100}
+  scheduler-batch-size: ${SCHEDULER_BATCH_SIZE:50}
+  rate-limit-per-minute: ${RATE_LIMIT_PER_MINUTE:60}
+  redis-zset-key: task_scheduler:pending
+  exchange-name: task_scheduler
+  dead-letter-exchange-name: tasks.dlx
+  dead-letter-queue-name: tasks.dead_letter
+  worker-queue-name: tasks.user.all
+  worker-routing-key: tasks.user.#
+  cassandra-keyspace: ${CASSANDRA_KEYSPACE:task_scheduler}
+
+springdoc:
+  swagger-ui:
+    path: /docs
